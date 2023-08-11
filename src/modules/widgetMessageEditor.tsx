@@ -13,7 +13,7 @@ const MessageEditor = (props) => {
         {arrVarNames.map((name) => <VariableButton btnName={name} key={arrVarNames.indexOf(name)} />)}
       </div>
       <IfButton />
-      <Template />
+      <Template arrVarNames={arrVarNames} template={template} callbackSave={callbackSave} />
     </div>
   );
 };

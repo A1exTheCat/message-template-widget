@@ -1,13 +1,13 @@
 //@ts-nocheck
 import React from "react";
 
-const TemplateInput = (props) => {
+const TemplateInput = ({ value, id, index, onChange }) => {
   return (
     <textarea
       placeholder="Textarea"
       className="text-input"
-      value={props.value}
-      onChange={(e) => props.onChange(e.target.value)}
+      value={value}
+      onChange={(e) => onChange(id, index, e.target.value)}
     />
   );
 };

@@ -12,7 +12,14 @@ const callbackSave = (template) => {
 }
 
 const arrVarNames = ['firstname', 'lastname', 'company', 'position'];
-const template = [];
+const template = [
+  {
+    id: 1,
+    type: 'initial',
+    textareas: ['123123', '', '', '', ''],
+    structure: ['text', '', '', '', '']
+  },
+];
 
 
 function App() {
