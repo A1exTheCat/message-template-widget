@@ -2,27 +2,7 @@
 import React, { useState } from "react";
 import IfThenElseInputs from "../UI/IfThenElseInputs";
 
-const Template = ( { arrVarNames, template, callbackSave } ) => {
-  const [tree, setTree] = useState([
-    {
-      id: 1,
-      type: 'component',
-      textareas: [ '1', '1', '1', '1', '1' ],
-      structure: [ 'text', 2, 'text', 'text', 'text' ]
-    },
-    {
-      id: 2,
-      type: 'subcomponent',
-      textareas: ['2323', '2', '2', '2', '55555'],
-      structure: ['text', 'text', 'text', 3, 'text']
-    }, 
-    {
-      id: 3,
-      type: 'subcomponent',
-      textareas: ['2323', '2', '2', '2', '55555'],
-      structure: ['text', 'text', 'text', 'text', 'text']
-    }
-  ]);
+const Template = ( { arrVarNames, tree, callbackSave, setTree } ) => {
   
   const updateTextarea = (nodeId, index, newValue) => {
     setTree(prevTree => {
@@ -39,6 +19,7 @@ const Template = ( { arrVarNames, template, callbackSave } ) => {
   };
 
   const deleteComponent = (nodeId) => {
+
     const deletedComponent = tree.find((node) => node.id === nodeId);
     deletedComponent.structure.forEach((id) => {
       if (id !== 'text') {
