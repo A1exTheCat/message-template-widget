@@ -1,9 +1,11 @@
 //@ts-nocheck
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import IfThenElseInputs from "../UI/IfThenElseInputs";
+import { CursorContext } from "../modules/widgetMessageEditor"
 
 const Template = ( { arrVarNames, tree, callbackSave, setTree } ) => {
-  
+  const { setCursor } = useContext(CursorContext);
+
   const updateTextarea = (nodeId, index, newValue) => {
     setTree(prevTree => {
       const updatedTree = prevTree.map(node => {
@@ -19,8 +21,26 @@ const Template = ( { arrVarNames, tree, callbackSave, setTree } ) => {
   };
 
   const deleteComponent = (nodeId) => {
-
     const deletedComponent = tree.find((node) => node.id === nodeId);
+
+    if (nodeId === 1) {
+      const newText = `${deletedComponent.textareas[0]}${deletedComponent.textareas[4]}`;
+      const newNode = {
+        id: 1,
+        type: 'initial',
+        textareas: [ newText, '', '', '', '' ],
+        structure: [ 'text', 'text', 'text', 'text', 'text' ]
+      };
+
+      setTree([newNode]);
+      
+      return setCursor({
+        id: 1,
+        index: 0,
+        position: 0,
+      });
+    }
+
     deletedComponent.structure.forEach((id) => {
       if (id !== 'text') {
         deleteComponent(id);
@@ -35,21 +55,27 @@ const Template = ( { arrVarNames, tree, callbackSave, setTree } ) => {
     });
 
     setTree(prevTree => prevTree.filter(node => node.id !== nodeId));
+
+    setCursor({
+      id: 1,
+      index: 0,
+      position: 0,
+    });
   };
 
   const renderTree = (tree, inicialTree) => {
     return inicialTree.map((node) => (
-          <IfThenElseInputs
-            key={node.id}
-            id={node.id}
-            tree={tree}
-            type={node.type}
-            textareas={node.textareas}
-            structure={node.structure}
-            updateTextarea={updateTextarea}
-            deleteComponent={deleteComponent}
-          />
-        ));
+      <IfThenElseInputs
+        key={node.id}
+        id={node.id}
+        tree={tree}
+        type={node.type}
+        textareas={node.textareas}
+        structure={node.structure}
+        updateTextarea={updateTextarea}
+        deleteComponent={deleteComponent}
+      />
+    ));
   };
   // фильтруем от subcomponents
   const inicialTree = tree.filter((node) => node.type !== 'subcomponent');

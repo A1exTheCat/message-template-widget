@@ -4,7 +4,7 @@ import TemplateInput from "./TemplateInput";
 
 const IfThenElseInputs = ({ id, tree, type, textareas, structure, updateTextarea, deleteComponent }) => {
   if (type === "initial") {
-    return <TemplateInput value={textareas[0]} onChange={updateTextarea} />;
+    return <TemplateInput value={textareas[0]} id={id} index="0" onChange={updateTextarea} />;
   }
 
   const renderContent = (textarea, subType, index) => {

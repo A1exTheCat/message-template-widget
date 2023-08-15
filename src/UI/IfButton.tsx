@@ -10,29 +10,18 @@ const IfButton = ({tree, setTree}) => {
   const addIfThenElseFunc = () => {
     const updatedNode = tree.find((node) => node.id === cursor.id);
 
-    if (updatedNode.structure[cursor.index] === tree.length + 1) {
-      return;
-    }
-
     const newTextareaOne = updatedNode.textareas[cursor.index].slice(0, cursor.position);
     const newTextareaTwo = updatedNode.textareas[cursor.index].slice(cursor.position);
-    
-    updatedNode.structure[cursor.index] = tree.length + 1
 
-    const newNode = {
-      id: tree.length + 1,
-      type: 'subcomponent',
-      textareas: [newTextareaOne, '', '', '', newTextareaTwo],
-      structure: ['text', 'text', 'text', 'text', 'text']
-    };
+    if (updatedNode.type === 'initial') {
+      const newNode = {
+        id: 1,
+        type: 'component',
+        textareas: [newTextareaOne, '', '', '', newTextareaTwo],
+        structure: ['text', 'text', 'text', 'text', 'text']
+      };
 
-    setTree(prevTree => {
-      const updatedTree = prevTree.map(node => {
-        if (node.id === cursor.id) {
-          return newNode;
-        }
-        return node;
-      });
+      setTree([newNode]);
       
       setCursor({
         id: 1,
@@ -40,8 +29,33 @@ const IfButton = ({tree, setTree}) => {
         position: 0,
       });
 
-      return [...updatedTree, updatedNode];
-    });
+    } else {
+      updatedNode.structure[cursor.index] = tree.length + 1;
+
+      const newNode = {
+        id: tree.length + 1,
+        type: 'subcomponent',
+        textareas: [newTextareaOne, '', '', '', newTextareaTwo],
+        structure: ['text', 'text', 'text', 'text', 'text']
+      };
+
+      setTree(prevTree => {
+        const updatedTree = prevTree.map(node => {
+          if (node.id === cursor.id) {
+            return newNode;
+          }
+          return node;
+        });
+
+        setCursor({
+          id: tree.length + 1,
+          index: 0,
+          position: 0,
+        });
+
+        return [...updatedTree, updatedNode];
+      });
+    }
   }
 
   return (

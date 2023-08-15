@@ -12,22 +12,10 @@ const MessageEditor = (props) => {
   const [tree, setTree] = useState([
     {
       id: 1,
-      type: 'component',
+      type: 'initial',
       textareas: [ '', '', '', '', '' ],
       structure: [ 'text', 'text', 'text', 'text', 'text' ]
     },
-    {
-      id: 2,
-      type: 'subcomponent',
-      textareas: ['2323', '2', '2', '2', '55555'],
-      structure: ['text', 'text', 'text', 3, 'text']
-    },
-    {
-      id: 3,
-      type: 'subcomponent',
-      textareas: ['2323', '2', '2', '2', '55555'],
-      structure: ['text', 'text', 'text', 'text', 'text']
-    }
   ]);
 
   const [cursor, setCursor] = useState(
