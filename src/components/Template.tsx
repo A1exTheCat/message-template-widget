@@ -1,9 +1,9 @@
 //@ts-nocheck
-import React, { useState, useContext } from "react";
+import React, { useContext } from "react";
 import IfThenElseInputs from "../UI/IfThenElseInputs";
-import { CursorContext } from "../modules/widgetMessageEditor"
+import { CursorContext } from "../modules/widgetMessageEditor";
 
-const Template = ( { arrVarNames, tree, callbackSave, setTree } ) => {
+const Template = ( { tree, setTree } ) => {
   const { setCursor } = useContext(CursorContext);
 
   const updateTextarea = (nodeId, index, newValue) => {
