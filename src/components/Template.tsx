@@ -49,8 +49,10 @@ const Template = ( { tree, setTree } ) => {
 
     tree.forEach((node) => {
       if (node.structure.indexOf(nodeId) !== -1) {
+        const newText = `${deletedComponent.textareas[0]}${deletedComponent.textareas[4]}`;
         const index = node.structure.indexOf(nodeId);
         node.structure[index] = 'text';
+        node.textareas[index] = newText;
       }
     });
 

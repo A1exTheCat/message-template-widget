@@ -1,6 +1,7 @@
 //@ts-nocheck
 import React, { useContext } from "react";
 import { CursorContext } from "../modules/widgetMessageEditor";
+import TextareaAutosize from 'react-textarea-autosize';
 
 const TemplateInput = ({ value, id, index, onChange }) => {
 
@@ -13,8 +14,9 @@ const TemplateInput = ({ value, id, index, onChange }) => {
   };
 
   return (
-    <textarea
-      placeholder="Textarea"
+    <TextareaAutosize
+      minRows="2"
+      placeholder="Enter text"
       className="text-input"
       id={id}
       data-index={index}

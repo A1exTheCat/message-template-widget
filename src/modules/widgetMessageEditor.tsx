@@ -40,7 +40,7 @@ const MessageEditor = (props) => {
         <IfButton tree={tree} setTree={setTree}/>
         <Template arrVarNames={arrVarNames} tree={tree} setTree={setTree} />
         <FooterButtons tree={tree} setPreview={setPreview} callbackSave={callbackSave} setEditorStatus={setEditorStatus}/>
-        {preview && <Preview />}
+        {preview && <Preview tree={tree} arrVarNames={arrVarNames} setPreview={setPreview}/>}
       </div>
     </CursorContext.Provider>
   );
