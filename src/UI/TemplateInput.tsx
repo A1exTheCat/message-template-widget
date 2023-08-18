@@ -10,7 +10,6 @@ const TemplateInput = ({ value, id, index, onChange }) => {
   const updateCursor = (id, index, position) => {
     const newCursor = { id, index, position };
     setCursor(newCursor);
-    console.log(newCursor);
   };
 
   return (
