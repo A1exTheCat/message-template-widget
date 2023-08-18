@@ -1,13 +1,16 @@
 import React from "react";
-
-// Define the props type
+// Определение интерфейса для свойств компонента StartButton.
+// Здесь у нас есть только одно свойство - функция, которая будет вызываться при нажатии на кнопку.
 interface StartButtonProps {
-  onClick: () => void;  // Assuming that the onClick prop is a function that takes no arguments and returns void.
+  onClick: () => void;
 }
 
+// Компонент StartButton, представляющий кнопку для запуска редактора сообщений.
 const StartButton: React.FC<StartButtonProps> = ({ onClick }) => {
   return (
+    // Обертка для кнопки.
     <div className="start-page">
+      {/* Кнопка, которая при нажатии вызывает переданную функцию из свойств. */}
       <button className="start-button" onClick={onClick}>
         Message Editor
       </button>

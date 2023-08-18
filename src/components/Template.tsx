@@ -2,6 +2,7 @@ import React, { useContext, FC } from "react";
 import IfThenElseInputs from "../UI/IfThenElseInputs";
 import { CursorContext } from "../modules/widgetMessageEditor";
 
+// Описание интерфейса для узлов дерева
 interface TreeNode {
   id: number;
   type: string;
@@ -9,22 +10,26 @@ interface TreeNode {
   structure: (string | number)[];
 }
 
+// Описание свойств для компонента Template
 interface TemplateProps {
   tree: TreeNode[];
   setTree: React.Dispatch<React.SetStateAction<TreeNode[]>>;
 }
 
 const Template: FC<TemplateProps> = ({ tree, setTree }) => {
+  // Получение контекста для работы с курсором
   const context = useContext(CursorContext);
 
+  // Проверка, что контекст был инициализирован корректно
   if (!context) {
     throw new Error("CursorContext value is undefined!");
   }
 
   const { setCursor } = context;
 
+  // Обновление значения текстовой области в дереве
   const updateTextarea = (nodeId: number, index: number, newValue: string): void => {
-    setTree((prevTree: TreeNode[]) => {
+    setTree(prevTree => {
       const updatedTree = prevTree.map(node => {
         if (node.id === nodeId) {
           const updatedTextareas = [...node.textareas];
@@ -35,13 +40,14 @@ const Template: FC<TemplateProps> = ({ tree, setTree }) => {
       });
       return updatedTree;
     });
-};
+  };
 
+  // Удаление компонента из дерева по ID
   const deleteComponent = (nodeId: number): void => {
-    const deletedComponent = tree.find((node) => node.id === nodeId);
+    const deletedComponent = tree.find(node => node.id === nodeId);
 
     if (!deletedComponent) {
-      return; // Optionally handle the error case if needed.
+      return; // Остановка функции, если компонент не найден
     }
 
     if (nodeId === 1) {
@@ -54,7 +60,6 @@ const Template: FC<TemplateProps> = ({ tree, setTree }) => {
       };
 
       setTree([newNode]);
-
       return setCursor({
         id: 1,
         index: 0,
@@ -62,13 +67,15 @@ const Template: FC<TemplateProps> = ({ tree, setTree }) => {
       });
     }
 
-    deletedComponent.structure.forEach((id) => {
+    // Рекурсивное удаление всех подкомпонентов
+    deletedComponent.structure.forEach(id => {
       if (typeof id !== "string") {
         deleteComponent(id);
       }
-    })
+    });
 
-    tree.forEach((node) => {
+    // Обновление текста и структуры после удаления
+    tree.forEach(node => {
       if (node.structure.indexOf(nodeId) !== -1) {
         const newText = `${deletedComponent.textareas[0]}${deletedComponent.textareas[4]}`;
         const index = node.structure.indexOf(nodeId);
@@ -77,7 +84,7 @@ const Template: FC<TemplateProps> = ({ tree, setTree }) => {
       }
     });
 
-    setTree((prevTree: TreeNode[]) => prevTree.filter(node => node.id !== nodeId));
+    setTree(prevTree => prevTree.filter(node => node.id !== nodeId));
 
     setCursor({
       id: 1,
@@ -86,8 +93,9 @@ const Template: FC<TemplateProps> = ({ tree, setTree }) => {
     });
   };
 
+  // Рекурсивное рендеринг дерева
   const renderTree = (tree: TreeNode[], inicialTree: TreeNode[]): JSX.Element[] => {
-    return inicialTree.map((node) => (
+    return inicialTree.map(node => (
       <IfThenElseInputs
         key={node.id}
         id={node.id}
@@ -101,10 +109,12 @@ const Template: FC<TemplateProps> = ({ tree, setTree }) => {
     ));
   };
 
-  const inicialTree = tree.filter((node) => node.type !== 'subcomponent');
+  // Получение начальной структуры дерева
+  const inicialTree = tree.filter(node => node.type !== 'subcomponent');
 
   return (
     <div className="template-container">
+      {/* Отображение дерева */}
       {renderTree(tree, inicialTree)}
     </div>
   );

@@ -1,6 +1,7 @@
 import React from "react";
 import TemplateInput from "./TemplateInput";
 
+// Определение типов для структуры дерева.
 interface TreeNode {
   id: number;
   type: string;
@@ -8,6 +9,7 @@ interface TreeNode {
   structure: (string | number)[];
 }
 
+// Свойства компонента IfThenElseInputs.
 interface IfThenElseInputsProps {
   id: number;
   tree: TreeNode[];
@@ -27,20 +29,26 @@ const IfThenElseInputs: React.FC<IfThenElseInputsProps> = ({
   updateTextarea, 
   deleteComponent 
 }) => {
+  // Если тип компонента "initial", то просто рендерим компонент TemplateInput.
   if (type === "initial") {
     return <TemplateInput value={textareas[0]} id={id} index={0} onChange={updateTextarea} />;
   }
 
+  // Функция для рендеринга содержимого (может быть либо текстом, либо подкомпонентом).
   const renderContent = (textarea: string, subType: string | number, index: number) => {
+    // Если подтип 'text', то рендерим TemplateInput.
     if (subType === 'text') {
       return (
         <TemplateInput value={textarea} id={id} index={index} onChange={updateTextarea} />
       )
     }
     
+    // Ищем подкомпонент по ID в дереве.
     const renderingSubComponent = tree.find((node) => node.id === subType);
+    // Если подкомпонент не найден, возвращаем null.
     if(!renderingSubComponent) return null;
 
+    // Рекурсивный вызов IfThenElseInputs для рендеринга подкомпонента.
     return (
       <IfThenElseInputs
         id={renderingSubComponent.id}
@@ -55,6 +63,7 @@ const IfThenElseInputs: React.FC<IfThenElseInputsProps> = ({
     )
   };
 
+  // Рендерим блок условий (IF-THEN-ELSE).
   return (
     <div className="if-then-else-block">
       {renderContent(textareas[0], structure[0], 0)}

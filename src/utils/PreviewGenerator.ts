@@ -1,3 +1,4 @@
+// Определение типов данных для узла дерева и объекта с переменными.
 type TreeNode = {
   id: number;
   type: string;
@@ -7,8 +8,10 @@ type TreeNode = {
 
 type VariableObject = { [key: string]: string };
 
+// Функция для генерации предварительного просмотра текстового сообщения.
 const previewGenerator = (template: TreeNode[], varNames: VariableObject): string => {
   
+  // Замена переменных в тексте на их реальные значения из varNames.
   const replaceValues = (text: string): string => {
     const regex = /\{([^}]+)\}/g;
     return text.replace(regex, (match, key) => {
@@ -16,22 +19,26 @@ const previewGenerator = (template: TreeNode[], varNames: VariableObject): strin
     });
   };
 
+  // Проверка, содержит ли текст переменную и имеется ли соответствующая переменная в varNames.
   const checkValues = (text: string): boolean => {
     const regex = /^\{([^\s}]+)\}$/;
     const match = text.match(regex);
     return Boolean(match && varNames[match[1]]);
   };
 
+  // Поиск начального узла в дереве.
   const inicialTree = template.find((node) => node.type === 'component' || node.type ==='initial');
   if (!inicialTree) {
     throw new Error("Initial tree not found");
   }
 
+  // Рекурсивная функция, преобразующая узел дерева в строку текста.
   const fromNodeToText = (node: TreeNode): string => {
     const nodeResult: string[] = [];
     const { textareas, structure } = node;
 
     nodeResult.push(replaceValues(textareas[0]));
+
     if (checkValues(textareas[1])) {
       if (structure[2] === 'text') {
         nodeResult.push(replaceValues(textareas[2]));
@@ -51,11 +58,13 @@ const previewGenerator = (template: TreeNode[], varNames: VariableObject): strin
         }
       }
     }
+
     nodeResult.push(replaceValues(textareas[4]));
 
     return nodeResult.join(' ');
   }
 
+  // Возвращаем сгенерированный текст на основе начального узла.
   return fromNodeToText(inicialTree);
 }
 

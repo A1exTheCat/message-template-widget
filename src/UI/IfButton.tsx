@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { CursorContext } from "../modules/widgetMessageEditor";
 
+// Определение типов для структуры дерева и курсора.
 interface TreeNode {
   id: number;
   type: string;
@@ -19,6 +20,7 @@ interface CursorContextType {
   setCursor: React.Dispatch<React.SetStateAction<Cursor>>;
 }
 
+// Свойства компонента IfButton.
 interface IfButtonProps {
   tree: TreeNode[];
   setTree: React.Dispatch<React.SetStateAction<TreeNode[]>>;
@@ -27,15 +29,19 @@ interface IfButtonProps {
 const IfButton: React.FC<IfButtonProps> = ({ tree, setTree }) => {
   const someVariable = '{some_variable}';
 
+  // Получаем текущее состояние курсора из контекста.
   const { cursor, setCursor } = useContext<CursorContextType>(CursorContext);
 
   const addIfThenElseFunc = () => {
+    // Ищем узел дерева по ID из текущего состояния курсора.
     const updatedNode: TreeNode | undefined = tree.find((node) => node.id === cursor.id);
-    if (!updatedNode) return;  // If node not found, exit function
+    if (!updatedNode) return;  // Если узел не найден, выходим из функции.
 
+    // Разделяем текущий текст узла на две части по позиции курсора.
     const newTextareaOne: string = updatedNode.textareas[cursor.index].slice(0, cursor.position);
     const newTextareaTwo: string = updatedNode.textareas[cursor.index].slice(cursor.position);
 
+    // Проверяем тип текущего узла.
     if (updatedNode.type === 'initial') {
       const newNode = {
         id: 1,
@@ -44,8 +50,9 @@ const IfButton: React.FC<IfButtonProps> = ({ tree, setTree }) => {
         structure: ['text', 'text', 'text', 'text', 'text']
       };
 
+      // Устанавливаем новый узел в состояние дерева и обновляем курсор.
       setTree([newNode]);
-      
+
       setCursor({
         id: 1,
         index: 0,
@@ -53,6 +60,7 @@ const IfButton: React.FC<IfButtonProps> = ({ tree, setTree }) => {
       });
 
     } else {
+      // Для не-инициальных узлов обновляем структуру и добавляем новый узел.
       updatedNode.structure[cursor.index] = tree.length + 1;
 
       const newNode = {
@@ -65,11 +73,12 @@ const IfButton: React.FC<IfButtonProps> = ({ tree, setTree }) => {
       setTree((prevTree: TreeNode[]) => {
         const updatedTree: TreeNode[] = prevTree.map(node => {
           if (node.id === cursor.id) {
-            return newNode; // newNode should also be of type TreeNode
+            return newNode; // newNode также должен быть типа TreeNode.
           }
           return node;
         });
-  
+
+        // Обновляем курсор.
         setCursor({
           id: tree.length + 1,
           index: 0,
@@ -81,6 +90,7 @@ const IfButton: React.FC<IfButtonProps> = ({ tree, setTree }) => {
     }
   }
 
+  // Возвращаем кнопку с текстом для вставки условного блока.
   return (
     <button className="if-button" onClick={() => addIfThenElseFunc()}>
       <p className="if-button-header">Click to add:</p>
