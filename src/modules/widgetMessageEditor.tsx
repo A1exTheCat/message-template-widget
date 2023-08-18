@@ -1,46 +1,68 @@
-//@ts-nocheck
+import React, { useState, FC, SetStateAction, Dispatch } from "react";
 import IfButton from "../UI/IfButton";
 import VariableButton from "../UI/variableButton";
 import Template from "../components/Template";
-import React, { useState } from "react";
 import FooterButtons from "../UI/FooterButtons";
 import Preview from "../components/Preview";
 
-export const CursorContext = React.createContext({});
+interface Cursor {
+  id: number;
+  index: number;
+  position: number;
+}
 
-const MessageEditor = (props) => {
-  const { arrVarNames, template, callbackSave, setEditorStatus } = props;
+interface TreeNode {
+  id: number;
+  type: string;
+  textareas: string[];
+  structure: (string | number)[];
+}
 
-  const [tree, setTree] = useState(template ? template : [
+interface MessageEditorProps {
+  arrVarNames: string[];
+  template: TreeNode[] | null;
+  callbackSave: (template: TreeNode[]) => Promise<void>;
+  setEditorStatus: (status: boolean) => void;
+}
+
+interface CursorContextType {
+  cursor: Cursor;
+  setCursor: Dispatch<SetStateAction<Cursor>>;
+}
+
+export const CursorContext = React.createContext<CursorContextType>({} as CursorContextType);
+
+const MessageEditor: FC<MessageEditorProps> = ({ arrVarNames, template, callbackSave, setEditorStatus }) => {
+  const [tree, setTree] = useState<TreeNode[]>(template || [
     {
       id: 1,
       type: 'initial',
-      textareas: [ '', '', '', '', '' ],
-      structure: [ 'text', 'text', 'text', 'text', 'text' ]
+      textareas: ['', '', '', '', ''],
+      structure: ['text', 'text', 'text', 'text', 'text'],
     },
   ]);
 
-  const [cursor, setCursor] = useState(
-    {
-      id: 1,
-      index: 0,
-      position: 0,
-    }
-  );
+  const [cursor, setCursor] = useState<Cursor>({
+    id: 1,
+    index: 0,
+    position: 0,
+  });
 
-  const [preview, setPreview] = useState(false);
+  const [preview, setPreview] = useState<boolean>(false);
   
   return (
-    <CursorContext.Provider value={{cursor, setCursor}}>
+    <CursorContext.Provider value={{ cursor, setCursor }}>
       <div className="editor-page-container">
         <h1 className="header">Message Template Editor</h1>
         <div className="var-buttons-block">
-          {arrVarNames.map((name) => <VariableButton btnName={name} tree={tree} setTree={setTree} key={arrVarNames.indexOf(name)} />)}
+          {arrVarNames.map((name, index) => (
+            <VariableButton btnName={name} tree={tree} setTree={setTree} key={index} />
+          ))}
         </div>
-        <IfButton tree={tree} setTree={setTree}/>
-        <Template arrVarNames={arrVarNames} tree={tree} setTree={setTree} />
-        <FooterButtons tree={tree} setPreview={setPreview} callbackSave={callbackSave} setEditorStatus={setEditorStatus}/>
-        {preview && <Preview tree={tree} arrVarNames={arrVarNames} setPreview={setPreview}/>}
+        <IfButton tree={tree} setTree={setTree} />
+        <Template tree={tree} setTree={setTree} />
+        <FooterButtons tree={tree} setPreview={setPreview} callbackSave={callbackSave} setEditorStatus={setEditorStatus} />
+        {preview && <Preview tree={tree} arrVarNames={arrVarNames} setPreview={setPreview} />}
       </div>
     </CursorContext.Provider>
   );

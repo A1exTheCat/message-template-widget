@@ -1,17 +1,40 @@
-//@ts-nocheck
 import React, { useContext } from "react";
-import { CursorContext } from "../modules/widgetMessageEditor"
+import { CursorContext } from "../modules/widgetMessageEditor";
 
-const IfButton = ({tree, setTree}) => {
+interface TreeNode {
+  id: number;
+  type: string;
+  textareas: string[];
+  structure: (string | number)[];
+}
+
+interface Cursor {
+  id: number;
+  index: number;
+  position: number;
+}
+
+interface CursorContextType {
+  cursor: Cursor;
+  setCursor: React.Dispatch<React.SetStateAction<Cursor>>;
+}
+
+interface IfButtonProps {
+  tree: TreeNode[];
+  setTree: React.Dispatch<React.SetStateAction<TreeNode[]>>;
+}
+
+const IfButton: React.FC<IfButtonProps> = ({ tree, setTree }) => {
   const someVariable = '{some_variable}';
 
-  const { cursor, setCursor } = useContext(CursorContext);
+  const { cursor, setCursor } = useContext<CursorContextType>(CursorContext);
 
   const addIfThenElseFunc = () => {
-    const updatedNode = tree.find((node) => node.id === cursor.id);
+    const updatedNode: TreeNode | undefined = tree.find((node) => node.id === cursor.id);
+    if (!updatedNode) return;  // If node not found, exit function
 
-    const newTextareaOne = updatedNode.textareas[cursor.index].slice(0, cursor.position);
-    const newTextareaTwo = updatedNode.textareas[cursor.index].slice(cursor.position);
+    const newTextareaOne: string = updatedNode.textareas[cursor.index].slice(0, cursor.position);
+    const newTextareaTwo: string = updatedNode.textareas[cursor.index].slice(cursor.position);
 
     if (updatedNode.type === 'initial') {
       const newNode = {
@@ -39,20 +62,20 @@ const IfButton = ({tree, setTree}) => {
         structure: ['text', 'text', 'text', 'text', 'text']
       };
 
-      setTree(prevTree => {
-        const updatedTree = prevTree.map(node => {
+      setTree((prevTree: TreeNode[]) => {
+        const updatedTree: TreeNode[] = prevTree.map(node => {
           if (node.id === cursor.id) {
-            return newNode;
+            return newNode; // newNode should also be of type TreeNode
           }
           return node;
         });
-
+  
         setCursor({
           id: tree.length + 1,
           index: 0,
           position: 0,
         });
-
+  
         return [...updatedTree, updatedNode];
       });
     }

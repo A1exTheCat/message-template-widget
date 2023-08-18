@@ -1,27 +1,44 @@
-//@ts-nocheck
 import React, { useContext } from "react";
+
 import { CursorContext } from "../modules/widgetMessageEditor";
 import TextareaAutosize from 'react-textarea-autosize';
 
-const TemplateInput = ({ value, id, index, onChange }) => {
+interface TemplateInputProps {
+  value: string;
+  id: number;
+  index: number;
+  onChange: (id: number, index: number, value: string) => void;
+}
 
-  const { setCursor } = useContext(CursorContext);
+const TemplateInput: React.FC<TemplateInputProps> = ({ value, id, index, onChange }) => {
 
-  const updateCursor = (id, index, position) => {
+  const cursorContext = useContext(CursorContext);
+  const setCursor = cursorContext?.setCursor;
+
+  const updateCursor = (id: number, index: number, position: number | null): void => {
+    if (position === null) return; // handle null case for position
     const newCursor = { id, index, position };
-    setCursor(newCursor);
-  };
+    setCursor && setCursor(newCursor);
+};
 
   return (
     <TextareaAutosize
-      minRows="2"
+      minRows={2}
       placeholder="Enter text"
       className="text-input"
-      id={id}
-      data-index={index}
+      id={String(id)}
+      data-index={String(index)}
       value={value}
       onChange={(e) => onChange(id, index, e.target.value)}
-      onSelect={(e) => updateCursor(Number(e.target.id), Number(e.target.dataset.index), e.target.selectionStart)}
+      onSelect={(e: React.FormEvent<HTMLTextAreaElement>) => {
+        const target = e.target as HTMLTextAreaElement;
+        const position = target.selectionStart;
+        const idx = target.dataset.index;
+        
+        if (idx) {
+            updateCursor(Number(target.id), Number(idx), position);
+        }
+    }}
     />
   );
 };

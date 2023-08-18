@@ -1,45 +1,54 @@
-//@ts-nocheck
+type TreeNode = {
+  id: number;
+  type: string;
+  textareas: string[];
+  structure: (string | number)[];
+};
 
-const previewGenerator = (template, varNames) => {
-  const replaceValues = (text) => {
-    // Регулярное выражение для поиска подстрок вида {ключ}
+type VariableObject = { [key: string]: string };
+
+const previewGenerator = (template: TreeNode[], varNames: VariableObject): string => {
+  
+  const replaceValues = (text: string): string => {
     const regex = /\{([^}]+)\}/g;
-    // Заменяем все подстроки в тексте
-    const replacedText = text.replace(regex, (match, key) => {
-        if (varNames.hasOwnProperty(key)) {
-            return varNames[key];
-        }
-        // Если ключ отсутствует, возвращаем исходное совпадение
-        return match;
+    return text.replace(regex, (match, key) => {
+      return varNames[key] ?? match;
     });
-    return replacedText;
   };
 
-  const checkValues = (text) => {
-    // Регулярное выражение для поиска подстрок вида {ключ}
+  const checkValues = (text: string): boolean => {
     const regex = /^\{([^\s}]+)\}$/;
     const match = text.match(regex);
-    return match && varNames.hasOwnProperty(match[1]) && varNames[match[1]] !== '';
+    return Boolean(match && varNames[match[1]]);
   };
 
   const inicialTree = template.find((node) => node.type === 'component' || node.type ==='initial');
+  if (!inicialTree) {
+    throw new Error("Initial tree not found");
+  }
 
-  const fromNodeToText = (node) => {
-    const nodeResult = [];
+  const fromNodeToText = (node: TreeNode): string => {
+    const nodeResult: string[] = [];
     const { textareas, structure } = node;
 
-      nodeResult.push(replaceValues(textareas[0]));
+    nodeResult.push(replaceValues(textareas[0]));
     if (checkValues(textareas[1])) {
       if (structure[2] === 'text') {
         nodeResult.push(replaceValues(textareas[2]));
       } else {
-        nodeResult.push(fromNodeToText(template.find((node) => node.id === structure[2])));
+        const childNode = template.find((innerNode) => innerNode.id === structure[2]);
+        if (childNode) {
+          nodeResult.push(fromNodeToText(childNode));
+        }
       }
     } else {
       if (structure[3] === 'text') {
         nodeResult.push(replaceValues(textareas[3]));
       } else {
-        nodeResult.push(fromNodeToText(template.find((node) => node.id === structure[3])));
+        const childNode = template.find((innerNode) => innerNode.id === structure[3]);
+        if (childNode) {
+          nodeResult.push(fromNodeToText(childNode));
+        }
       }
     }
     nodeResult.push(replaceValues(textareas[4]));
@@ -47,9 +56,7 @@ const previewGenerator = (template, varNames) => {
     return nodeResult.join(' ');
   }
 
-  const result = fromNodeToText(inicialTree);
-
-  return result;
+  return fromNodeToText(inicialTree);
 }
 
 export default previewGenerator;

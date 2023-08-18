@@ -1,32 +1,57 @@
-//@ts-nocheck
 import React from "react";
 import TemplateInput from "./TemplateInput";
 
-const IfThenElseInputs = ({ id, tree, type, textareas, structure, updateTextarea, deleteComponent }) => {
+interface TreeNode {
+  id: number;
+  type: string;
+  textareas: string[];
+  structure: (string | number)[];
+}
+
+interface IfThenElseInputsProps {
+  id: number;
+  tree: TreeNode[];
+  type: string;
+  textareas: string[];
+  structure: (string | number)[];
+  updateTextarea: (id: number, index: number, value: string) => void;
+  deleteComponent: (id: number) => void;
+}
+
+const IfThenElseInputs: React.FC<IfThenElseInputsProps> = ({ 
+  id, 
+  tree, 
+  type, 
+  textareas, 
+  structure, 
+  updateTextarea, 
+  deleteComponent 
+}) => {
   if (type === "initial") {
-    return <TemplateInput value={textareas[0]} id={id} index="0" onChange={updateTextarea} />;
+    return <TemplateInput value={textareas[0]} id={id} index={0} onChange={updateTextarea} />;
   }
 
-  const renderContent = (textarea, subType, index) => {
+  const renderContent = (textarea: string, subType: string | number, index: number) => {
     if (subType === 'text') {
       return (
-        <TemplateInput value={textarea} id={id} index={index} onChange={updateTextarea}/>
+        <TemplateInput value={textarea} id={id} index={index} onChange={updateTextarea} />
       )
     }
     
     const renderingSubComponent = tree.find((node) => node.id === subType);
+    if(!renderingSubComponent) return null;
 
     return (
       <IfThenElseInputs
-      id={renderingSubComponent.id}
-      key={renderingSubComponent.id}
-      tree={tree}
-      type={renderingSubComponent.type}
-      textareas={renderingSubComponent.textareas}
-      structure={renderingSubComponent.structure}
-      updateTextarea={updateTextarea}
-      deleteComponent={deleteComponent}
-    />
+        id={renderingSubComponent.id}
+        key={renderingSubComponent.id}
+        tree={tree}
+        type={renderingSubComponent.type}
+        textareas={renderingSubComponent.textareas}
+        structure={renderingSubComponent.structure}
+        updateTextarea={updateTextarea}
+        deleteComponent={deleteComponent}
+      />
     )
   };
 

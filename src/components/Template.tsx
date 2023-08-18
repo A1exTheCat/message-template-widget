@@ -1,13 +1,30 @@
-//@ts-nocheck
-import React, { useContext } from "react";
+import React, { useContext, FC } from "react";
 import IfThenElseInputs from "../UI/IfThenElseInputs";
 import { CursorContext } from "../modules/widgetMessageEditor";
 
-const Template = ( { tree, setTree } ) => {
-  const { setCursor } = useContext(CursorContext);
+interface TreeNode {
+  id: number;
+  type: string;
+  textareas: string[];
+  structure: (string | number)[];
+}
 
-  const updateTextarea = (nodeId, index, newValue) => {
-    setTree(prevTree => {
+interface TemplateProps {
+  tree: TreeNode[];
+  setTree: React.Dispatch<React.SetStateAction<TreeNode[]>>;
+}
+
+const Template: FC<TemplateProps> = ({ tree, setTree }) => {
+  const context = useContext(CursorContext);
+
+  if (!context) {
+    throw new Error("CursorContext value is undefined!");
+  }
+
+  const { setCursor } = context;
+
+  const updateTextarea = (nodeId: number, index: number, newValue: string): void => {
+    setTree((prevTree: TreeNode[]) => {
       const updatedTree = prevTree.map(node => {
         if (node.id === nodeId) {
           const updatedTextareas = [...node.textareas];
@@ -18,14 +35,18 @@ const Template = ( { tree, setTree } ) => {
       });
       return updatedTree;
     });
-  };
+};
 
-  const deleteComponent = (nodeId) => {
+  const deleteComponent = (nodeId: number): void => {
     const deletedComponent = tree.find((node) => node.id === nodeId);
+
+    if (!deletedComponent) {
+      return; // Optionally handle the error case if needed.
+    }
 
     if (nodeId === 1) {
       const newText = `${deletedComponent.textareas[0]}${deletedComponent.textareas[4]}`;
-      const newNode = {
+      const newNode: TreeNode = {
         id: 1,
         type: 'initial',
         textareas: [ newText, '', '', '', '' ],
@@ -33,7 +54,7 @@ const Template = ( { tree, setTree } ) => {
       };
 
       setTree([newNode]);
-      
+
       return setCursor({
         id: 1,
         index: 0,
@@ -42,7 +63,7 @@ const Template = ( { tree, setTree } ) => {
     }
 
     deletedComponent.structure.forEach((id) => {
-      if (id !== 'text') {
+      if (typeof id !== "string") {
         deleteComponent(id);
       }
     })
@@ -56,7 +77,7 @@ const Template = ( { tree, setTree } ) => {
       }
     });
 
-    setTree(prevTree => prevTree.filter(node => node.id !== nodeId));
+    setTree((prevTree: TreeNode[]) => prevTree.filter(node => node.id !== nodeId));
 
     setCursor({
       id: 1,
@@ -65,7 +86,7 @@ const Template = ( { tree, setTree } ) => {
     });
   };
 
-  const renderTree = (tree, inicialTree) => {
+  const renderTree = (tree: TreeNode[], inicialTree: TreeNode[]): JSX.Element[] => {
     return inicialTree.map((node) => (
       <IfThenElseInputs
         key={node.id}
@@ -79,7 +100,7 @@ const Template = ( { tree, setTree } ) => {
       />
     ));
   };
-  // фильтруем от subcomponents
+
   const inicialTree = tree.filter((node) => node.type !== 'subcomponent');
 
   return (
