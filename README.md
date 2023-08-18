@@ -1,7 +1,7 @@
 # Message Template Editor
 
-install:
-npm ci
+## Install
+make install
 
-start:
-npm start
+## Start
+make start
