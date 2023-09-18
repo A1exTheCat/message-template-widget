@@ -19,13 +19,6 @@ const previewGenerator = (template: TreeNode[], varNames: VariableObject): strin
     });
   };
 
-  // Проверка, содержит ли текст переменную и имеется ли соответствующая переменная в varNames.
-  const checkValues = (text: string): boolean => {
-    const regex = /^\{([^\s}]+)\}$/;
-    const match = text.match(regex);
-    return Boolean(match && varNames[match[1]]);
-  };
-
   // Поиск начального узла в дереве.
   const inicialTree = template.find((node) => node.type === 'component' || node.type ==='initial');
   if (!inicialTree) {
@@ -39,7 +32,7 @@ const previewGenerator = (template: TreeNode[], varNames: VariableObject): strin
 
     nodeResult.push(replaceValues(textareas[0]));
 
-    if (checkValues(textareas[1])) {
+    if (replaceValues(textareas[1]) !== '') {
       if (structure[2] === 'text') {
         nodeResult.push(replaceValues(textareas[2]));
       } else {
