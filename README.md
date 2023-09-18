@@ -1,6 +1,6 @@
 # Test job - Message Template Editor (React, Typescript)
 
-#[Link](https://a1exthecat.github.io/message-template-widget/)https://a1exthecat.github.io/message-template-widget/
+#[LinkWithMyResult](https://a1exthecat.github.io/message-template-widget/)
 
 ## Message Template Preview Widget
 
